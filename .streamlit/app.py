@@ -3,11 +3,13 @@ from dotenv import load_dotenv
 import os
 from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import HuggingFaceInstructEmbeddings
-from langchain.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceInstructEmbeddings
+from langchain_community.vectorstores import FAISS
 from langchain.prompts import PromptTemplate
-from langchain import HuggingFaceHub
-from langchain.schema.runnable import RunnablePassthrough
+from langchain_community.llms import HuggingFaceHub
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.runnables import RunnableSequence
+from langchain_core.output_parsers import StrOutputParser
 
 st.title('LLM - Retrieval Augmented Generation')
 
@@ -129,9 +131,10 @@ def main():
         
         # create generation chain
         generation_chain = (
-            {'context': retrieval_chain, 'question': RunnablePassthrough()}
+            {"context": retriever | format_docs, "question": RunnablePassthrough()}
             | prompt
             | llm
+            | StrOutputParser()
         )
 
         # button press
