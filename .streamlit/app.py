@@ -16,8 +16,13 @@ pdf = st.file_uploader(label='Upload PDF')
 question = st.text_input(label='Question')
 
 def authenticate():
-    load_dotenv()
-    os.environ.get('HUGGINGFACEHUB_API_TOKEN');
+
+    # if running on cloud
+    try:
+        os.environ('HUGGINGFACEHUB_API_TOKEN')
+    except:
+        load_dotenv()
+        os.environ.get('HUGGINGFACEHUB_API_TOKEN')
 
 def load_pdf(pdf):
     
